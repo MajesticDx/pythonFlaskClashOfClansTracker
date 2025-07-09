@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mainpage</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous"
+  />
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"
+  ></script>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap");
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Poppins", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(
+        135deg,
+        var(--color-bg-gradient1) 0%,
+        var(--color-bg-gradient2) 40%,
+        var(--color-bg-gradient3) 100%
+      );
+      color: var(--color-text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      background-attachment: fixed;
+      background-color: #f5f7fa;
+      --color-bg-gradient1: #8ec5fc;
+      --color-bg-gradient2: #e0c3fc;
+      --color-bg-gradient3: #8ec5fc;
+      --color-text-dark: #222;
+    }
+
+    nav.navbar {
+      background: linear-gradient(90deg, #0062e6, #33aeff);
+      box-shadow: 0 4px 8px rgba(0, 98, 230, 0.3);
+    }
+
+    nav.navbar .navbar-brand {
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav.navbar .navbar-brand:not(:last-child) {
+      margin-right: 1rem;
+    }
+
+    nav.navbar .navbar-brand:hover,
+    nav.navbar .navbar-brand:focus {
+      background-color: rgba(255, 255, 255, 0.25);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .container-fluid {
+      max-width: 960px;
+    }
+
+    .images-row {
+      position: relative;
+      gap: 3rem;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .col.d-flex.justify-content-center.position-relative {
+      position: relative;
+      z-index: 1;
+    }
+    .col.d-flex.justify-content-center.position-relative:first-child::before {
+      content: "";
+      position: absolute;
+      top: 20%;
+      left: -40px;
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, #9ac5fc88, #5b8ae4cc);
+      border-radius: 18px;
+      filter: blur(35px);
+      transition: filter 0.3s ease;
+      z-index: 0;
+    }
+    .col.d-flex.justify-content-center.position-relative:first-child::after {
+      content: "";
+      position: absolute;
+      bottom: 15%;
+      left: -60px;
+      width: 110px;
+      height: 110px;
+      background: linear-gradient(135deg, #a7bffa77, #7899f799);
+      border-radius: 18px;
+      filter: blur(22px);
+      z-index: 0;
+    }
+    .col.d-flex.justify-content-center.position-relative:last-child::before {
+      content: "";
+      position: absolute;
+      top: 20%;
+      right: -40px;
+      width: 180px;
+      height: 180px;
+      background: linear-gradient(135deg, #a7bffa88, #7899f7cc);
+      border-radius: 18px;
+      filter: blur(32px);
+      z-index: 0;
+      transition: filter 0.3s ease;
+    }
+    .col.d-flex.justify-content-center.position-relative:last-child::after {
+      content: "";
+      position: absolute;
+      bottom: 15%;
+      right: -60px;
+      width: 110px;
+      height: 110px;
+      background: linear-gradient(135deg, #9ac5fc77, #4786f588);
+      border-radius: 18px;
+      filter: blur(18px);
+      z-index: 0;
+    }
+
+    .image-wrapper {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 10px 25px rgba(14, 45, 90, 0.1);
+      transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94),
+        box-shadow 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+      cursor: pointer;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+    }
+    .image-wrapper:hover,
+    .image-wrapper:focus-visible {
+      transform: scale(1.065);
+      box-shadow: 0 24px 48px rgba(55, 99, 229, 0.2);
+      outline-offset: 4px;
+      outline-color: #4a75e0;
+      outline-style: solid;
+      outline-width: 3px;
+    }
+    .image-wrapper img {
+      height: 240px;
+      width: 240px;
+      object-fit: contain;
+      border-radius: 14px;
+      filter: drop-shadow(0 3px 8px rgba(27, 58, 106, 0.1));
+      transition: filter 0.3s ease;
+      background: transparent; 
+      padding: 0; 
+      display: block;
+    }
+    .image-wrapper:hover img,
+    .image-wrapper:focus-visible img {
+      filter: drop-shadow(0 6px 12px rgba(20, 43, 85, 0.15));
+    }
+
+    .btn-custom {
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 0.68rem 2rem;
+      border-radius: 32px;
+      letter-spacing: 0.03em;
+      box-shadow: 0 4px 10px rgba(0, 98, 230, 0.15);
+      transition: all 0.28s ease;
+      color: #0057cc;
+      background-color: transparent;
+      border: 2.5px solid #0057cc;
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      cursor: pointer;
+      min-width: 140px;
+    }
+    .btn-custom:hover,
+    .btn-custom:focus-visible {
+      color: #003d99;
+      background: linear-gradient(90deg, #407be6, #4d84ff);
+      box-shadow: 0 9px 24px rgba(0, 98, 230, 0.3);
+      border-color: transparent;
+      transform: translateY(-2px);
+      outline: none;
+    }
+    .btn-custom:active {
+      transform: translateY(0) scale(1);
+      box-shadow: 0 4px 12px rgba(0, 98, 230, 0.2);
+    }
+
+    @media (max-width: 575.98px) {
+      .row.images-row {
+        flex-direction: column;
+        gap: 3rem;
+      }
+      .col.d-flex.justify-content-center.position-relative::before,
+      .col.d-flex.justify-content-center.position-relative::after {
+        display: none;
+      }
+      .image-wrapper {
+        width: 220px;
+        height: 220px;
+      }
+      .image-wrapper img {
+        height: 190px;
+        width: 190px;
+      }
+      .btn-custom {
+        min-width: 140px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar" role="navigation" aria-label="Primary navigation">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/game">Numbers</a>
+      <a class="navbar-brand" href="/">Home</a>
+      <a class="navbar-brand" href="/cocplayer">CoC</a>
+    </div>
+  </nav>
+
+  <main class="container mt-5" role="main">
+    <div
+      class="row images-row justify-content-center align-items-center g-5"
+      aria-label="Main images navigation"
+    >
+      <div class="col d-flex justify-content-center position-relative">
+        <a href="/game" class="image-wrapper" tabindex="0" aria-label="Go to Game page">
+          <img src="static/game.png" alt="Game" />
+        </a>
+      </div>
+      <div class="col d-flex justify-content-center position-relative">
+        <a href="/cocplayer" class="image-wrapper" tabindex="0" aria-label="Go to CoC page">
+          <img src="static/coc.png" alt="CoC" />
+        </a>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

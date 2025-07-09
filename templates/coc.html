@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>COC Spielerstatistiken</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+    crossorigin="anonymous" />
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous" defer></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+      function renderPieChart(canvasId, percent, label = 'pie chart') {
+      const ctx = document.getElementById(canvasId).getContext('2d');
+      const remaining = 100 - percent;
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [percent, remaining],
+            backgroundColor: ['#2471ff', '#e0e0e0'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          cutout: '75%',
+          responsive: false,
+          plugins: {
+            tooltip: { enabled: false },
+            legend: { display: false },
+            aria: {
+              enabled: true,
+              label: label
+            }
+          }
+        }
+      });
+      }
+
+      renderPieChart('troopPieChart', {{ player_stats.prozentTroop}}, 'Troop completion');
+      renderPieChart('spellPieChart', {{ player_stats.prozentSpell}}, 'Spell completion');
+      renderPieChart('petPieChart', {{ player_stats.prozentPet}}, 'Pet completion');
+      renderPieChart('heroPieChart', {{ player_stats.prozentHero}}, 'Hero completion');
+      renderPieChart('builderTroopPieChart', {{ player_stats.prozentBuilderTroop}}, 'Builder Troop completion');
+      renderPieChart('builderHeroPieChart', {{ player_stats.prozentBuilderHero}}, 'Builder Hero completion');
+      renderPieChart('equipmentPieChart', {{ player_stats.prozentEquipment}}, 'Equipment completion');
+    });
+    </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+    :root {
+      --color-primary1: #4a90e2;
+      --color-primary2: #50e3c2;
+      --color-primary3: #f5a623;
+      --color-bg-gradient1: #f0f4f8;
+      --color-bg-gradient2: #d6e4f0;
+      --color-bg-gradient3: #a6d8f0;
+      --color-card-bg1: #ffffffdd;
+      --color-card-bg2: #fcf6e8dd;
+      --color-card-bg3: #e8f6f9dd;
+      --color-text-dark: #1e293b;
+      --color-text-muted: #94a3b8;
+      --color-accent: #7d5fff;
+      --border-radius: 18px;
+      --shadow-light: rgba(0, 0, 0, 0.07);
+      --shadow-hover: rgba(77, 144, 254, 0.25);
+      --builder-gradient-start: #1a3e7c;
+      --builder-gradient-end: #3359a6;
+      --builder-border-color: #2a4d8e;
+      --builder-box-shadow-inset: rgba(31, 65, 135, 0.6);
+      --builder-box-shadow: rgba(38, 75, 139, 0.6);
+      --normal-table-bg: #82c1fc;
+      --normal-table-border: #74b0ff;
+      --normal-table-shadow-inset: rgba(122, 183, 255, 0.25);
+      --normal-table-shadow: rgba(70, 140, 230, 0.35);
+      --normal-table-header-bg: #82b9ff;
+      --normal-table-header-shadow: rgba(7, 7, 7, 0.7);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(
+          135deg,
+          var(--color-bg-gradient1) 0%,
+          var(--color-bg-gradient2) 40%,
+          var(--color-bg-gradient3) 100%);
+      color: var(--color-text-dark);
+      line-height: 1.6;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-text-size-adjust: 100%;
+      -moz-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+      background-attachment: fixed;
+    }
+
+    nav.navbar {
+      background: linear-gradient(90deg, #0062e6, #33aeff);
+      box-shadow: 0 4px 8px rgba(0, 98, 230, 0.3);
+    }
+
+    nav.navbar .navbar-brand {
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    nav.navbar .navbar-brand:not(:last-child) {
+      margin-right: 1rem;
+    }
+
+    nav.navbar .navbar-brand:hover,
+    nav.navbar .navbar-brand:focus {
+      background-color: rgba(255, 255, 255, 0.25);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    .container-fluid {
+      max-width: 960px;
+    }
+
+    h1 {
+      text-align: center;
+      background: linear-gradient(270deg, #6a5acd, #87ceeb, #dda0dd, #6a5acd);
+      background-size: 800% 800%;
+      animation: gradientShift 18s ease infinite;
+      color: white;
+      padding: 18px 0;
+      margin-bottom: 40px;
+      font-size: 3rem;
+      font-weight: 900;
+      text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.25), 0 0 8px rgba(106, 90, 205, 0.6);
+      user-select: none;
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%
+      }
+
+      50% {
+        background-position: 100% 50%
+      }
+
+      100% {
+        background-position: 0% 50%
+      }
+    }
+
+    main.container {
+      max-width: 1600px;
+      margin: 0 auto 72px;
+      display: flex;
+      gap: 36px;
+      flex-wrap: nowrap;
+      justify-content: space-between;
+      user-select: none;
+      position: relative;
+      min-height: 600px;
+    }
+
+    main.container::before {
+      content: "";
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: 3px;
+      max-width: 1200px;
+      margin: 48px auto 0;
+      background: linear-gradient(90deg, #0062e6, #33aeff);
+      border-radius: 3px;
+      box-shadow: 0 2px 8px rgba(0, 98, 230, 0.6);
+      z-index: 5;
+    }
+
+    section.left-column,
+    section.middle-column,
+    section.right-column {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin: 15px 0;
+      min-width: 0;
+    }
+
+    section.left-column {
+      max-width: 500px;
+    }
+
+    section.middle-column {
+      max-width: 500px;
+    }
+
+    section.right-column {
+      max-width: 500px;
+    }
+
+    .normal-info,
+    .builder-info {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .builder-info {
+      margin-top: 0;
+    }
+
+    .highlight-box {
+      background: #d5ebff;
+      border-radius: 14px;
+      border: 2px solid #6d8dc9;
+      padding: 28px 30px 30px 30px;
+      box-shadow:
+        0 8px 20px rgba(70, 140, 230, 0.35),
+        inset 0 0 16px rgba(122, 183, 255, 0.25);
+      position: relative;
+      transition:
+        box-shadow 0.3s ease,
+        transform 0.3s ease,
+        border-color 0.3s ease;
+      user-select: none;
+      cursor: default;
+      will-change: transform, box-shadow;
+    }
+
+    .highlight-box:hover,
+    .highlight-box:focus-within {
+      box-shadow:
+        0 6px 12px rgba(72, 103, 160, 0.4),
+        inset 0 0 10px rgba(51, 98, 184, 0.3);
+      border-color: #446096;
+      transform: scale(1.01);
+      z-index: 10;
+      outline: none;
+    }
+
+    .highlight-box.builder-base {
+      background: linear-gradient(135deg, var(--builder-gradient-start), var(--builder-gradient-end));
+      border: 2px solid var(--builder-border-color);
+      box-shadow:
+        0 10px 25px var(--builder-box-shadow),
+        inset 0 0 30px var(--builder-box-shadow-inset);
+      color: #e0e9ff;
+      transition: box-shadow 0.3s ease, transform 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+    }
+
+    .highlight-box.builder-base:hover,
+    .highlight-box.builder-base:focus-within {
+      box-shadow:
+        0 6px 12px rgba(78, 116, 198, 0.5),
+        inset 0 0 10px rgba(115, 153, 255, 0.45);
+      border-color: #7399ff;
+      transform: scale(1.01);
+      color: #f0f6ff;
+      outline: none;
+      cursor: default;
+    }
+
+    .heading-wrapper {
+      margin-bottom: 22px;
+      cursor: default;
+      user-select: none;
+      color: inherit;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .heading-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .heading-star {
+      color: rgb(0, 0, 0);
+      font-size: 1.4rem;
+    }
+
+    .heading-star-builder {
+      color: rgb(255, 255, 255);
+      font-size: 1.4rem;
+    }
+
+    .heading-text {
+      font-weight: 800;
+      font-size: 1.1rem;
+    }
+
+    .highlight-box.builder-base .heading-text {
+      color: #e0e9ff;
+    }
+
+    ul {
+      list-style-type: none;
+      padding-left: 0;
+      margin-top: 0;
+      color: inherit;
+    }
+
+    li {
+      background: #c7deff;
+      color: #0e374b;
+      margin: 8px 0;
+      padding: 14px 18px;
+      border-left: 7px solid #2a4d8e;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 1rem;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+      transition: background-color 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+      user-select: text;
+      cursor: default;
+    }
+
+    .highlight-box.builder-base li {
+      background: rgba(50, 70, 120, 0.15);
+      color: #dde8ff;
+      border-left-color: #7aa7ff;
+      box-shadow: 0 1px 6px rgba(122, 167, 255, 0.4);
+    }
+
+    li:hover {
+      background: #e2ebff;
+      border-left-color: #5670a1;
+      box-shadow: 0 5px 16px rgba(70, 123, 221, 0.7);
+      color: #062433;
+    }
+
+    .highlight-box.builder-base li:hover {
+      background: #6583f8cc;
+      border-left-color: #a3b8ff;
+      box-shadow: 0 5px 16px #7196f8aa;
+      color: #edf4ff;
+    }
+
+    ul li img {
+      vertical-align: middle;
+      height: 26px;
+      margin-left: 8px;
+      filter: drop-shadow(0 0 3px #48d1cc);
+      border-radius: 4px;
+      transition: filter 0.3s ease;
+    }
+
+    ul li img:hover {
+      filter: drop-shadow(0 0 6px #33cfcf);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-bottom: 26px;
+      background: var(--normal-table-bg);
+      box-shadow: inset 0 2px 12px var(--normal-table-shadow-inset), 0 4px 12px var(--normal-table-shadow);
+      border-radius: 12px;
+      border: 1.5px solid var(--normal-table-border);
+      overflow: hidden;
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      color: #1e3a5f;
+      font-size: 1rem;
+      user-select: text;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    table:hover {
+      box-shadow:
+        0 14px 28px rgba(72, 105, 216, 0.85),
+        inset 0 0 36px rgba(96, 132, 252, 0.9);
+      border-color: #7f9dfd;
+      cursor: default;
+    }
+
+    .highlight-box.builder-base table {
+      background: #28437b;
+      border-color: #5f7acb;
+      color: #dbe7ff;
+      box-shadow:
+        inset 0 2px 20px rgba(90, 123, 190, 0.5),
+        0 4px 20px rgba(38, 75, 139, 0.8);
+    }
+
+    .highlight-box.builder-base table:hover {
+      box-shadow:
+        0 14px 28px rgba(94, 122, 216, 0.85),
+        inset 0 0 36px rgba(121, 152, 255, 0.9);
+      border-color: #a3b8ff;
+      cursor: default;
+    }
+
+    th,
+    td {
+      border: none;
+      padding: 14px 18px;
+      text-align: center;
+      transition: color 0.3s ease;
+      letter-spacing: 0.015em;
+    }
+
+    th {
+      background: linear-gradient(135deg, #2276bb, #0e55ac);
+      color: #e0e0e0;
+      border-bottom: 3px solid #073c85;
+      font-weight: 700;
+      user-select: none;
+      text-shadow: none;
+    }
+
+    .highlight-box.builder-base th {
+      background: linear-gradient(135deg, #5f7acb 0%, #35539b 100%);
+      color: #e0e9ff;
+      border-bottom: 3px solid #708cd2;
+      text-shadow: 0 1px 4px #263b6e;
+      font-weight: 700;
+    }
+
+    .highlight-box.builder-base td {
+      color: #d0dbff;
+    }
+
+    tbody tr:nth-child(even) {
+      background-color: #c9e3ff;
+    }
+
+    tbody tr:nth-child(odd) {
+      background-color: #d7e9ff;
+    }
+
+    tbody tr:hover {
+      background-color: #a0bae7 !important;
+      color: #042c6a;
+      font-weight: 700;
+      cursor: default;
+    }
+
+    .highlight-box.builder-base tbody tr:nth-child(even) {
+      background-color: rgba(83, 103, 159, 0.4);
+    }
+
+    .highlight-box.builder-base tbody tr:nth-child(odd) {
+      background-color: rgba(54, 69, 109, 0.6);
+    }
+
+    .highlight-box.builder-base tbody tr:hover {
+      background-color: #7196f8cc !important;
+      color: #edf4ff;
+      font-weight: 700;
+      cursor: default;
+    }
+
+    footer.footer {
+      margin-top: 60px;
+      padding: 18px 12px;
+      text-align: center;
+      background: #0062e6;
+      color: #e1e7f1;
+      font-size: 0.9rem;
+      font-weight: 500;
+      border-radius: 0 0 12px 12px;
+      letter-spacing: 0.05em;
+      user-select: none;
+      box-shadow: 0 -4px 10px rgba(0, 98, 230, 0.4);
+    }
+
+    @media (max-width: 992px) {
+      main.container {
+        flex-direction: column;
+        padding: 20px;
+        gap: 30px;
+      }
+
+      section.left-column,
+      section.middle-column,
+      section.right-column {
+        flex: 1 1 auto;
+        max-width: 100% !important;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar" role="navigation" aria-label="Hauptnavigation">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/game">Numbers</a>
+      <a class="navbar-brand" href="/" tabindex="0" aria-current="page">Home</a>
+      <a class="navbar-brand" href="/cocplayer" tabindex="0">CoC</a>
+    </div>
+  </nav>
+
+  <h1>Player Information for {{ player_stats.name }}</h1>
+
+  <main class="container" role="main" aria-label="Spielerstatistiken">
+
+    <section class="left-column" aria-labelledby="troops-info-text pets-info-text">
+      <div class="normal-info">
+        <div class="highlight-box" tabindex="0" aria-label="Truppen Informationen">
+          <div class="heading-wrapper" aria-labelledby="troops-info-text" tabindex="-1" style="display: flex; align-items: center; gap: 1rem;">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="troops-info-text">Troop Information</span>
+            </div>
+            <span tabindex="0" aria-label="Anzahl der Truppen">
+              {{ player_stats.troops | length }} / 38
+            </span>
+            <span> {{ player_stats.prozentTroop }} %</span>
+            <canvas id="troopPieChart" width="50" height="50" aria-label="Troop completion pie chart" role="img"></canvas>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for troop in player_stats.troops %}
+              <tr>
+                <td>{{ troop.name }}</td>
+                <td>{{ troop.level }}</td>
+                <td>{{ troop.maxLevel }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="highlight-box" tabindex="0" aria-label="Begleiter Informationen">
+          <div class="heading-wrapper" aria-labelledby="pets-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="pets-info-text">Pet Information</span>
+            </div>
+            <span tabindex="0" aria-label="Anzahl der Truppen">
+              {{ player_stats.pets | length }} / 11
+            </span>
+            <span> {{ player_stats.prozentPet }} %</span>
+            <canvas id="petPieChart" width="50" height="50" aria-label="Pet completion pie chart" role="img"></canvas>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for pet in player_stats.pets %}
+              <tr>
+                <td>{{ pet.name }}</td>
+                <td>{{ pet.level }}</td>
+                <td>{{ pet.maxLevel }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  
+    <section class="middle-column" aria-labelledby="general-info-text clan-info-text league-info-text heroes-info-text equipment-info-text">
+      <div class="normal-info">
+        <div class="highlight-box" tabindex="0" aria-label="Allgemeine Informationen">
+          <div class="heading-wrapper" aria-labelledby="general-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="general-info-text">General Information</span>
+            </div>
+          </div>
+          <ul>
+            <li>Tag: {{ player_stats.tag }}</li>
+            <li>Town Hall Level: {{ player_stats.townHallLevel }}</li>
+            <li>Erfahrungslevel: {{ player_stats.expLevel }}</li>
+            <li>Trophäen: {{ player_stats.trophies }}</li>
+            <li>Beste Trophäen: {{ player_stats.bestTrophies }}</li>
+          </ul>
+        </div>
+  
+        <div class="highlight-box" tabindex="0" aria-label="Clan Informationen">
+          <div class="heading-wrapper" aria-labelledby="clan-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="clan-info-text">Clan Information</span>
+            </div>
+          </div>
+          <ul>
+            <li>Clan Name: {{ player_stats.clan.name }}</li>
+            <li>Clan Tag: {{ player_stats.clan.tag }}</li>
+          </ul>
+        </div>
+  
+        <div class="highlight-box" tabindex="0" aria-label="Liga Informationen">
+          <div class="heading-wrapper" aria-labelledby="league-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="league-info-text">League Information</span>
+            </div>
+          </div>
+          <ul>
+            <li>
+              Liga Name: {{ player_stats.league.name }}
+              {% if player_stats.league.iconUrls %}
+              <img src="{{ player_stats.league.iconUrls.small }}" alt="Liga Icon" />
+              {% endif %}
+            </li>
+          </ul>
+        </div>
+  
+        <div class="highlight-box" tabindex="0" aria-label="Helden Informationen">
+          <div class="heading-wrapper" aria-labelledby="heroes-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="heroes-info-text">Hero Information</span>
+            </div>
+            <span tabindex="0" aria-label="Anzahl der Truppen">
+              {{ player_stats.heroes | length }} / 5
+            </span>
+            <span> {{ player_stats.prozentHero }} %</span>
+            <canvas id="heroPieChart" width="50" height="50" aria-label="Hero completion pie chart" role="img"></canvas>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for hero in player_stats.heroes %}
+              <tr>
+                <td>{{ hero.name }}</td>
+                <td>{{ hero.level }}</td>
+                <td>{{ hero.maxLevel }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="highlight-box" tabindex="0" aria-label="Helden Ausrüstung Informationen">
+          <div class="heading-wrapper" aria-labelledby="equipment-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="equipment-info-text">Hero Equipment</span>
+            </div>
+            <span tabindex="0" aria-label="Anzahl der Truppen">
+              {{ player_stats.heroEquipment | length }} / 30
+            </span>
+            <span> {{ player_stats.prozentEquipment }} %</span>
+            <canvas id="equipmentPieChart" width="50" height="50" aria-label="Equipment completion pie chart" role="img"></canvas>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for equipment in player_stats.heroEquipment %}
+              <tr>
+                <td>{{ equipment.name }}</td>
+                <td>{{ equipment.level }}</td>
+                <td>{{ equipment.maxLevel }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  
+    <section class="right-column" aria-labelledby="builder-info-text builder-heroes-info-text builder-troops-info-text spells-info-text">
+      <div class="builder-info">
+        <div class="highlight-box builder-base" tabindex="0" aria-label="Builder Basis Informationen">
+          <div class="heading-wrapper" aria-labelledby="builder-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star-builder" aria-hidden="true">★</span>
+              <span class="heading-text" id="builder-info-text">Builder Base Information</span>
+            </div>
+          </div>
+          <ul>
+            <li>Builder Hall Level: <strong>{{ player_stats.builderHallLevel }}</strong></li>
+            <li>Builder Base Trophäen: <strong>{{ player_stats.builderBaseTrophies }}</strong></li>
+            <li>Beste Builder Base Trophäen: <strong>{{ player_stats.bestBuilderBaseTrophies }}</strong></li>
+            <li>Builder Base Liga Name: <strong>{{ player_stats.builderBaseLeague.name }}</strong></li>
+          </ul>
+        </div>
+  
+        <div class="highlight-box builder-base" tabindex="0" aria-label="Builder Basis Helden Informationen">
+          <div class="heading-wrapper" aria-labelledby="builder-heroes-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star-builder" aria-hidden="true">★</span>
+              <span class="heading-text" id="builder-heroes-info-text">BB Hero Information</span>
+            </div>
+            <span tabindex="0" aria-label="Anzahl der Truppen">
+              {{ player_stats.builder_heroes | length }} / 2
+            </span>
+            <span> {{ player_stats.prozentBuilderHero }} %</span>
+            <canvas id="builderHeroPieChart" width="50" height="50" aria-label="Builder Hero completion pie chart" role="img"></canvas>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for hero in player_stats.builder_heroes %}
+              <tr>
+                <td>{{ hero.name }}</td>
+                <td>{{ hero.level }}</td>
+                <td>{{ hero.maxLevel }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="highlight-box builder-base" tabindex="0" aria-label="Builder Basis Truppen Informationen">
+          <div class="heading-wrapper" aria-labelledby="builder-troops-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star-builder" aria-hidden="true">★</span>
+              <span class="heading-text" id="builder-troops-info-text">BB Troop Information</span>
+            </div>
+            <span tabindex="0" aria-label="Anzahl der Truppen">
+              {{ player_stats.builder_troops | length }} / 12
+            </span>
+            <span> {{ player_stats.prozentBuilderTroop }} %</span>
+            <canvas id="builderTroopPieChart" width="50" height="50" aria-label="Builder Troop completion pie chart" role="img"></canvas>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for troop in player_stats.builder_troops %}
+              <tr>
+                <td>{{ troop.name }}</td>
+                <td>{{ troop.level }}</td>
+                <td>{{ troop.maxLevel }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+  
+        <div class="highlight-box" tabindex="0" aria-label="Zauber Informationen">
+          <div class="heading-wrapper" aria-labelledby="spells-info-text" tabindex="-1">
+            <div class="heading-left">
+              <span class="heading-star" aria-hidden="true">★</span>
+              <span class="heading-text" id="spells-info-text">Spell Information</span>
+            </div>
+            <span tabindex="0" aria-label="Anzahl der Truppen">
+              {{ player_stats.spells | length }} / 15
+            </span>
+            <span> {{ player_stats.prozentSpell }} %</span>
+            <canvas id="spellPieChart" width="50" height="50" aria-label="Spell completion pie chart" role="img"></canvas>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Max Level</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for spell in player_stats.spells %}
+              <tr>
+                <td>{{ spell.name }}</td>
+                <td>{{ spell.level }}</td>
+                <td>{{ spell.maxLevel }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <p>&copy; 2025 COC Spielerstatistiken. Alle Rechte gehören mir!!!!.</p>
+  </footer>
+</body>
+
+</html>
