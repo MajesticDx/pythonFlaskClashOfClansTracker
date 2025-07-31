@@ -1,6 +1,10 @@
 # pythonFlaskClashOfClansTracker
 Clash of Clans Tracker Website
 
+NOT OPTIMISED FOR USAGE. THIS IS JUST A UPLOAD FOR DEMONSTRATION.
+I made this in school and it isn't well written or made for share.
+Keep this in mind!
+
 RUN main.py
 
 Get your Clash of Clans API token and insert it after the bearer part in main.py
